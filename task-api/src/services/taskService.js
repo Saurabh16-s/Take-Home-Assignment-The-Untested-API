@@ -2,16 +2,22 @@ const { v4: uuidv4 } = require('uuid');
 
 let tasks = [];
 
+// Fields a client is allowed to change through PUT. id, createdAt,
+// completedAt and assignee are managed by the server or by dedicated endpoints.
+const UPDATABLE_FIELDS = ['title', 'description', 'status', 'priority', 'dueDate'];
+
 const getAll = () => [...tasks];
 
 const findById = (id) => tasks.find((t) => t.id === id);
 
-const getByStatus = (status) => tasks.filter((t) => t.status.includes(status));
+const getByStatus = (status) => tasks.filter((t) => t.status === status);
 
-const getPaginated = (page, limit) => {
+// page is 1-based. An optional list lets callers paginate a filtered result.
+const getPaginated = (page, limit, list = tasks) => {
   const offset = (page - 1) * limit;
-  return tasks.slice(offset, offset + limit);
+  return list.slice(offset, offset + limit);
 };
+
 const getStats = () => {
   const now = new Date();
   const counts = { todo: 0, in_progress: 0, done: 0 };
@@ -46,7 +52,12 @@ const update = (id, fields) => {
   const index = tasks.findIndex((t) => t.id === id);
   if (index === -1) return null;
 
-  const updated = { ...tasks[index], ...fields };
+  const allowed = {};
+  UPDATABLE_FIELDS.forEach((key) => {
+    if (fields[key] !== undefined) allowed[key] = fields[key];
+  });
+
+  const updated = { ...tasks[index], ...allowed };
   tasks[index] = updated;
   return updated;
 };
@@ -65,7 +76,6 @@ const completeTask = (id) => {
 
   const updated = {
     ...task,
-    priority: 'medium',
     status: 'done',
     completedAt: new Date().toISOString(),
   };

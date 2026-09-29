@@ -5,12 +5,12 @@ Branch: https://github.com/Saurabh16-s/Take-Home-Assignment-The-Untested-API/tre
 ## What's included
 
 - **Tests:** `tests/unit/taskService.test.js` and `tests/integration/tasks.test.js` (behavior of the original API), plus `tests/integration/assign.test.js` (new endpoint).
-- **Bug report:** `BUG_REPORT.md` lists 7 bugs with location, root cause, how each was found, and a suggested fix.
-- **Fix:** pagination offset in `getPaginated` (`page * limit` changed to `(page - 1) * limit`).
+- **Bug report:** `BUG_REPORT.md` lists 7 bugs with location, root cause, how each was found, and the fix applied.
+- **Fixes:** all 7 bugs in the report are fixed, each with a test that failed first. Pagination came first (`page * limit` changed to `(page - 1) * limit`), then the status filter, priority reset, PUT overwriting `id`/`createdAt`, empty-string status, malformed JSON handling, and filter plus pagination.
 - **New endpoint:** `PATCH /tasks/:id/assign`.
 - **Coverage:** see the summary at the bottom.
 
-The test suite currently has 9 failing tests on purpose. They assert the correct behavior for the 6 bugs I found but did not fix, so they act as regression tests: each will pass once its bug is fixed.
+All 63 tests pass. Because the tests were written against the correct behavior before any fix, each one that failed initially now acts as a regression test for its bug.
 
 ## `assign` design decisions
 
@@ -50,15 +50,16 @@ The test suite currently has 9 failing tests on purpose. They assert the correct
 -----------------|---------|----------|---------|---------|-------------------
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -----------------|---------|----------|---------|---------|-------------------
-All files        |   97.41 |    91.76 |   96.66 |   97.87 |                   
- src             |   84.61 |       75 |      50 |   84.61 |                   
-  app.js         |   84.61 |       75 |      50 |   84.61 | 17-18             
+All files        |   96.83 |    89.36 |   96.77 |   97.88 |                   
+ src             |      80 |       60 |      50 |   85.71 |                   
+  app.js         |      80 |       60 |      50 |   85.71 | 20-21             
  src/routes      |     100 |    91.66 |     100 |     100 |                   
-  tasks.js       |     100 |    91.66 |     100 |     100 | 20-21             
- src/services    |   98.38 |    89.47 |     100 |     100 |                   
-  taskService.js |   98.38 |    89.47 |     100 |     100 | 21,80             
+  tasks.js       |     100 |    91.66 |     100 |     100 | 18-19             
+ src/services    |    98.5 |     90.9 |     100 |     100 |                   
+  taskService.js |    98.5 |     90.9 |     100 |     100 | 27,90             
  src/utils       |   96.29 |    94.73 |     100 |   96.29 |                   
   validators.js  |   96.29 |    94.73 |     100 |   96.29 | 31                
 -----------------|---------|----------|---------|---------|-------------------
-Tests: 9 failed, 54 passed, 63 total
+Test Suites: 3 passed, 3 total
+Tests:       63 passed, 63 total
 ```

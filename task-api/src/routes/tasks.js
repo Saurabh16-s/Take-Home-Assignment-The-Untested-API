@@ -11,19 +11,15 @@ router.get('/stats', (req, res) => {
 router.get('/', (req, res) => {
   const { status, page, limit } = req.query;
 
-  if (status) {
-    const tasks = taskService.getByStatus(status);
-    return res.json(tasks);
-  }
+  // Filter first, then paginate the filtered list.
+  const tasks = status ? taskService.getByStatus(status) : taskService.getAll();
 
   if (page !== undefined || limit !== undefined) {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 10;
-    const tasks = taskService.getPaginated(pageNum, limitNum);
-    return res.json(tasks);
+    return res.json(taskService.getPaginated(pageNum, limitNum, tasks));
   }
 
-  const tasks = taskService.getAll();
   res.json(tasks);
 });
 
